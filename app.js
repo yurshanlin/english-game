@@ -40,34 +40,10 @@ let collection = JSON.parse(localStorage.getItem("collection")||"[]");
 
 let current;
 
-// ===== 圖鑑資料（20隻完整版）=====
+// ===== 圖鑑資料（擴充完整版）=====
 const POKEDEX = [
- {id:1,name:"妙蛙種子",type:"grass",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"},
- {id:2,name:"妙蛙草",type:"grass",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/2.png"},
- {id:3,name:"小火龍",type:"fire",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png"},
- {id:4,name:"火恐龍",type:"fire",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/5.png"},
- {id:5,name:"傑尼龜",type:"water",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png"},
- {id:6,name:"卡咪龜",type:"water",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/8.png"},
 
- {id:7,name:"皮卡丘",type:"electric",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"},
- {id:8,name:"雷丘",type:"electric",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/26.png"},
-
- {id:9,name:"伊布",type:"normal",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/133.png"},
- {id:10,name:"水伊布",type:"water",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/134.png"},
- {id:11,name:"雷伊布",type:"electric",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/135.png"},
- {id:12,name:"火伊布",type:"fire",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/136.png"},
-
- {id:13,name:"卡比獸",type:"normal",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/143.png"},
- {id:14,name:"耿鬼",type:"ghost",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/94.png"},
-
- {id:15,name:"暴鯉龍",type:"water",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/130.png"},
- {id:16,name:"化石翼龍",type:"rock",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/142.png"},
-
- {id:17,name:"快龍",type:"dragon",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/149.png"},
- {id:18,name:"急凍鳥",type:"ice",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/144.png"},
- {id:19,name:"閃電鳥",type:"electric",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/145.png"},
- {id:20,name:"超夢",type:"psychic",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/150.png"}
-];
+ //
 
 // ===== 單字系統 =====
 function getPool(){
