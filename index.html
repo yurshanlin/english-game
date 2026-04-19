@@ -23,15 +23,22 @@
 
 <div id="choices"></div>
 
+<!-- 🎲 抽卡系統 -->
+<h2>🎲 抽卡</h2>
+<div id="gacha"></div>
+<button onclick="drawPokemon()">抽寶可夢（10分）</button>
+
+<!-- 📘 新圖鑑系統 -->
 <h2>📘 圖鑑</h2>
-<div id="poke"></div>
+<div id="progress"></div>
+<div id="pokedex" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;"></div>
 
 <script src="words.js"></script>
 <script src="app.js"></script>
 
 <script>
-document.getElementById("score").innerText=localStorage.getItem("score")||0;
-document.getElementById("level").innerText=1;
+document.getElementById("score").innerText = localStorage.getItem("score") || 0;
+document.getElementById("level").innerText = 1;
 </script>
 
 </body>
