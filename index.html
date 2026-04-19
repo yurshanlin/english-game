@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<title>英文冒險王 Pro</title>
+
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+</head>
+
+<body>
+
+<h1>🎮 英文冒險王 PRO</h1>
+
+<div>⭐ 分數：<span id="score"></span></div>
+<div>🏆 等級：<span id="level"></span></div>
+
+<div id="word" class="word"></div>
+
+<button onclick="speak()">🔊 發音</button>
+<button onclick="startVoice()">🎤 說出來</button>
+
+<div id="choices"></div>
+
+<h2>📘 圖鑑</h2>
+<div id="poke"></div>
+
+<script src="words.js"></script>
+<script src="app.js"></script>
+
+<script>
+document.getElementById("score").innerText=localStorage.getItem("score")||0;
+document.getElementById("level").innerText=1;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+body{
+  font-family:sans-serif;
+  text-align:center;
+  background:linear-gradient(#aee,#eef);
+}
+
+.word{
+  font-size:60px;
+  margin:20px;
+}
+
+button{
+  padding:15px;
+  margin:10px;
+  font-size:20px;
+  border-radius:12px;
+}
+
+.correctAnim{
+  animation: pop 0.5s;
+  color:green;
+}
+
+@keyframes pop{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.5);}
+  100%{transform:scale(1);}
+}
+
+.pokemon{
+  width:80px;
+}
