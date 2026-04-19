@@ -19,8 +19,8 @@ function updateMemory(word, correct){
   let wait = delay[Math.min(data.level, delay.length-1)];
 
   data.next = Date.now() + wait;
-
   memory[key] = data;
+
   save();
 }
 
@@ -35,20 +35,17 @@ let level = Number(localStorage.getItem("level")||1);
 let score = Number(localStorage.getItem("score")||0);
 let exp = Number(localStorage.getItem("exp")||0);
 let wrong = JSON.parse(localStorage.getItem("wrong")||"[]");
-
 let collection = JSON.parse(localStorage.getItem("collection")||"[]");
 
 let current;
 
+// ===== 圖鑑 =====
 const POKEDEX = [
-
- // ⭐ 基本款
  {id:1,name:"皮卡丘",type:"electric",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"},
  {id:2,name:"小火龍",type:"fire",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png"},
  {id:3,name:"傑尼龜",type:"water",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png"},
  {id:4,name:"妙蛙種子",type:"grass",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"},
 
- // ⭐ 你新增的（全部有名字）
  {id:21,name:"迷你Q",type:"ghost",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/778.png"},
  {id:22,name:"走路草",type:"grass",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/43.png"},
  {id:23,name:"蛋蛋",type:"grass",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/102.png"},
@@ -57,32 +54,40 @@ const POKEDEX = [
  {id:25,name:"畢力吉翁",type:"grass",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/640.png"},
  {id:26,name:"木木梟",type:"grass",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/722.png"},
 
- // ⭐ Mega（超稀有）
  {id:27,name:"超級噴火龍X",type:"fire",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10034.png"},
  {id:28,name:"超級噴火龍Y",type:"fire",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10035.png"},
 
  {id:29,name:"六尾",type:"fire",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/37.png"},
 
- // ⭐ 神獸
  {id:30,name:"火焰鳥",type:"fire",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/146.png"},
  {id:31,name:"鳳王",type:"fire",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/250.png"},
  {id:32,name:"炎帝",type:"fire",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/244.png"},
 
- // ⭐ 水系 / 特殊
  {id:33,name:"蚊香泳士",type:"water",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/62.png"},
  {id:34,name:"呆呆獸",type:"water",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/79.png"},
  {id:35,name:"拉普拉斯",type:"water",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/131.png"},
  {id:36,name:"海刺龍",type:"water",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/117.png"},
  {id:37,name:"海星星",type:"water",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/120.png"}
-
 ];
 
-// ===== 單字系統 =====
+// ===== 單字池（3輪 + 無限）=====
 function getPool(){
-  let lv = "level"+level;
-  return WORDS[lv] || WORDS.level1;
+  let cycle = Math.floor((level - 1) / 9);
+  let realLevel = ((level - 1) % 9) + 1;
+
+  if(cycle < 3){
+    return WORDS["level"+realLevel];
+  }
+
+  let all = [];
+  for(let i=1;i<=9;i++){
+    all = all.concat(WORDS["level"+i]);
+  }
+
+  return [...wrong, ...all];
 }
 
+// ===== 出題 =====
 function newWord(){
   let pool = getPool();
 
@@ -90,16 +95,24 @@ function newWord(){
   let source = due.length ? due : pool;
 
   current = source[Math.floor(Math.random()*source.length)];
-
-  if(!current){
-    current = pool[0];
-  }
+  if(!current) current = pool[0];
 
   document.getElementById("word").innerText = current.en;
 
   let choices=[current.zh];
+
+  let cycle = Math.floor((level - 1) / 9);
+  let choicePool = pool;
+
+  if(cycle >= 3){
+    choicePool = [];
+    for(let i=1;i<=9;i++){
+      choicePool = choicePool.concat(WORDS["level"+i]);
+    }
+  }
+
   while(choices.length<4){
-    let r=pool[Math.floor(Math.random()*pool.length)].zh;
+    let r=choicePool[Math.floor(Math.random()*choicePool.length)].zh;
     if(!choices.includes(r)) choices.push(r);
   }
 
@@ -128,8 +141,8 @@ function check(ans){
       wrong.push(current);
     }
 
-    save();
     alert("錯了");
+    save();
     newWord();
   }
 }
@@ -143,7 +156,15 @@ function correct(){
   if(exp>=20){
     level++;
     exp=0;
-    alert("升級到 Level "+level);
+
+    let cycle = Math.floor((level - 1) / 9) + 1;
+    let realLevel = ((level - 1) % 9) + 1;
+
+    if(cycle <= 3){
+      alert(`第${cycle}輪 - Level ${realLevel}`);
+    }else{
+      alert(`🔥 無限模式 Lv.${level}`);
+    }
   }
 
   document.getElementById("score").innerText = score;
@@ -165,12 +186,7 @@ function initDaily(){
   let today = getToday();
 
   if(daily.date !== today){
-    daily = {
-      date: today,
-      goal: 10,
-      progress: 0,
-      reward: false
-    };
+    daily = {date: today, goal: 10, progress: 0, reward: false};
   }
 
   renderDaily();
@@ -180,7 +196,7 @@ function updateDaily(){
   daily.progress++;
 
   if(daily.progress >= daily.goal && !daily.reward){
-    alert("🎁 每日任務完成！+10分");
+    alert("🎁 任務完成 +10分");
     score += 10;
     daily.reward = true;
   }
@@ -293,7 +309,7 @@ function save(){
   localStorage.setItem("daily",JSON.stringify(daily));
 }
 
-// ===== 語音辨識 =====
+// ===== 語音 =====
 function startVoice(){
   let rec=new (window.SpeechRecognition||window.webkitSpeechRecognition)();
   rec.lang="en-US";
