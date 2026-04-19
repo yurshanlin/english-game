@@ -40,10 +40,42 @@ let collection = JSON.parse(localStorage.getItem("collection")||"[]");
 
 let current;
 
-// ===== 圖鑑資料（擴充完整版）=====
 const POKEDEX = [
 
- //
+ // ⭐ 基本款
+ {id:1,name:"皮卡丘",type:"electric",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"},
+ {id:2,name:"小火龍",type:"fire",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png"},
+ {id:3,name:"傑尼龜",type:"water",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png"},
+ {id:4,name:"妙蛙種子",type:"grass",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"},
+
+ // ⭐ 你新增的（全部有名字）
+ {id:21,name:"迷你Q",type:"ghost",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/778.png"},
+ {id:22,name:"走路草",type:"grass",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/43.png"},
+ {id:23,name:"蛋蛋",type:"grass",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/102.png"},
+ {id:24,name:"菊草葉",type:"grass",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/152.png"},
+
+ {id:25,name:"畢力吉翁",type:"grass",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/640.png"},
+ {id:26,name:"木木梟",type:"grass",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/722.png"},
+
+ // ⭐ Mega（超稀有）
+ {id:27,name:"超級噴火龍X",type:"fire",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10034.png"},
+ {id:28,name:"超級噴火龍Y",type:"fire",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10035.png"},
+
+ {id:29,name:"六尾",type:"fire",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/37.png"},
+
+ // ⭐ 神獸
+ {id:30,name:"火焰鳥",type:"fire",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/146.png"},
+ {id:31,name:"鳳王",type:"fire",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/250.png"},
+ {id:32,name:"炎帝",type:"fire",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/244.png"},
+
+ // ⭐ 水系 / 特殊
+ {id:33,name:"蚊香泳士",type:"water",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/62.png"},
+ {id:34,name:"呆呆獸",type:"water",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/79.png"},
+ {id:35,name:"拉普拉斯",type:"water",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/131.png"},
+ {id:36,name:"海刺龍",type:"water",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/117.png"},
+ {id:37,name:"海星星",type:"water",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/120.png"}
+
+];
 
 // ===== 單字系統 =====
 function getPool(){
