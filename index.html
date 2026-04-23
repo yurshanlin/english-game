@@ -51,12 +51,19 @@ button{
   height:100%;
   background:red;
   width:100%;
+  transition:0.3s;
 }
 
 /* ✨ 進化提示 */
 #evolve{
   font-size:20px;
   color:orange;
+  margin:10px;
+  min-height:24px;
+}
+
+/* 🎲 抽卡顯示 */
+#gacha img{
   margin:10px;
 }
 </style>
@@ -67,8 +74,8 @@ button{
 
 <h1>🎮 英文冒險王 PRO</h1>
 
-<div>⭐ 分數：<span id="score"></span></div>
-<div>🏆 等級：<span id="level"></span></div>
+<div>⭐ 分數：<span id="score">0</span></div>
+<div>🏆 等級：<span id="level">1</span></div>
 
 <!-- 📅 每日任務 -->
 <div id="daily"></div>
@@ -109,8 +116,12 @@ button{
 <script src="app.js"></script>
 
 <script>
-document.getElementById("score").innerText = localStorage.getItem("score") || 0;
-document.getElementById("level").innerText = localStorage.getItem("level") || 1;
+// ⭐ 初始化顯示（避免空白）
+document.getElementById("score").innerText =
+  localStorage.getItem("score") || 0;
+
+document.getElementById("level").innerText =
+  localStorage.getItem("level") || 1;
 </script>
 
 </body>
