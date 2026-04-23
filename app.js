@@ -27,56 +27,72 @@ function isDue(word){
 let level = Number(localStorage.getItem("level")||1);
 let score = Number(localStorage.getItem("score")||0);
 let exp = Number(localStorage.getItem("exp")||0);
+let wrong = JSON.parse(localStorage.getItem("wrong")||"[]");
 let collection = JSON.parse(localStorage.getItem("collection")||"[]");
 
 let current;
 let usedSpeak = false;
 
-// ===== 音效 =====
-const soundDraw = new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg");
-const soundSSR = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
-const soundHit = new Audio("https://actions.google.com/sounds/v1/impacts/punch_medium.ogg");
-
-// ===== Boss系統 =====
-let boss = null;
-
-function spawnBoss(){
-  boss = {hp:50, max:50};
-  alert("🔥 Boss 出現！（HP 50）");
-  document.getElementById("bossBox").style.display="block";
-  renderBoss();
-}
-
-function renderBoss(){
-  if(!boss) return;
-
-  document.getElementById("bossName").innerText = "🔥 單字魔王";
-  document.getElementById("bossHp").style.width =
-    (boss.hp/boss.max*100)+"%";
-}
-
-// ===== 寶可夢池 =====
+// ===== 寶可夢圖鑑 =====
 const POKEDEX = [
-{id:1,name:"皮卡丘",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"},
-{id:2,name:"小火龍",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png"},
-{id:3,name:"傑尼龜",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png"},
-{id:4,name:"妙蛙種子",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"},
+ {id:1,name:"皮卡丘",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"},
+ {id:2,name:"小火龍",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png"},
+ {id:3,name:"傑尼龜",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png"},
+ {id:4,name:"妙蛙種子",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"},
 
-{id:5,name:"巨金怪",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/376.png"},
-{id:6,name:"胖丁",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/39.png"},
-{id:7,name:"百變怪",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/132.png"},
-{id:8,name:"波波",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/16.png"},
-{id:9,name:"大比鳥",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/18.png"},
-{id:10,name:"喵喵",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/52.png"},
+ {id:21,name:"迷你Q",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/778.png"},
+ {id:22,name:"走路草",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/43.png"},
+ {id:23,name:"蛋蛋",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/102.png"},
+ {id:24,name:"菊草葉",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/152.png"},
 
-{id:11,name:"帕路奇亞",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/484.png"},
-{id:12,name:"帝牙盧卡",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/483.png"},
-{id:13,name:"騎拉帝納",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/487.png"}
+ {id:25,name:"畢力吉翁",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/640.png"},
+ {id:26,name:"木木梟",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/722.png"},
+
+ {id:27,name:"超級噴火龍X",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10034.png"},
+ {id:28,name:"超級噴火龍Y",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10035.png"},
+
+ {id:29,name:"六尾",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/37.png"},
+
+ {id:30,name:"火焰鳥",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/146.png"},
+ {id:31,name:"鳳王",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/250.png"},
+ {id:32,name:"炎帝",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/244.png"},
+
+ {id:33,name:"蚊香泳士",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/62.png"},
+ {id:34,name:"呆呆獸",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/79.png"},
+ {id:35,name:"拉普拉斯",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/131.png"},
+ {id:36,name:"海刺龍",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/117.png"},
+ {id:37,name:"海星星",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/120.png"},
+
+ {id:40,name:"巨金怪",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/376.png"},
+ {id:41,name:"勾帕路翁",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/638.png"},
+ {id:42,name:"胖丁",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/39.png"},
+ {id:43,name:"百變怪",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/132.png"},
+ {id:44,name:"膽小蟲",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/767.png"},
+ {id:45,name:"波波",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/16.png"},
+ {id:46,name:"大比鳥",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/18.png"},
+ {id:47,name:"喵喵",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/52.png"},
+ {id:48,name:"寶石海星",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/121.png"},
+ {id:49,name:"角金魚",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/118.png"},
+ {id:50,name:"小鋸鱷",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/158.png"},
+ {id:51,name:"墨海馬",rarity:"common",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/116.png"},
+ {id:52,name:"刺龍王",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/230.png"},
+ {id:53,name:"椰蛋樹",rarity:"rare",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/103.png"},
+ {id:54,name:"帕路奇亞",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/484.png"},
+ {id:55,name:"帝牙盧卡",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/483.png"},
+ {id:56,name:"騎拉帝納",rarity:"legend",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/487.png"}
 ];
 
 // ===== 單字池 =====
 function getPool(){
-  return WORDS["level"+(((level-1)%9)+1)];
+  let cycle = Math.floor((level-1)/9);
+  let real = ((level-1)%9)+1;
+
+  if(cycle<3) return WORDS["level"+real];
+
+  let all=[];
+  for(let i=1;i<=9;i++) all=all.concat(WORDS["level"+i]);
+
+  return [...wrong,...all];
 }
 
 // ===== 出題 =====
@@ -87,7 +103,7 @@ function newWord(){
   let due=pool.filter(w=>isDue(w));
   let source=due.length?due:pool;
 
-  current=source[Math.floor(Math.random()*source.length)];
+  current=source[Math.floor(Math.random()*source.length)]||pool[0];
 
   document.getElementById("word").innerText=current.en;
 
@@ -115,22 +131,6 @@ function speak(){
 function check(ans){
   if(ans===current.zh){
     updateMemory(current,true);
-
-    let dmg = usedSpeak ? 1 : 3;
-
-    if(boss){
-      boss.hp -= dmg;
-      soundHit.play();
-
-      if(boss.hp<=0){
-        alert("🎉 擊敗 Boss！");
-        boss=null;
-        document.getElementById("bossBox").style.display="none";
-        drawPokemon(true);
-      }
-      renderBoss();
-    }
-
     correct();
   }else{
     updateMemory(current,false);
@@ -142,10 +142,6 @@ function check(ans){
 function correct(){
   score += usedSpeak ? 1 : 3;
   exp++;
-
-  if(level%5===0 && !boss){
-    spawnBoss();
-  }
 
   if(exp>=20){
     level++;
@@ -160,44 +156,79 @@ function correct(){
   newWord();
 }
 
-// ===== 抽卡（重點🔥）=====
-function drawPokemon(bossReward=false){
-  if(!bossReward && score<10){
+// ===== 抽卡系統（SSR動畫🔥）=====
+function getRarityColor(rarity){
+  if(rarity==="legend") return "gold";
+  if(rarity==="rare") return "#4da6ff";
+  return "#ffffff";
+}
+
+function getRandomPokemon(){
+  let notOwned = POKEDEX.filter(p=>!collection.find(c=>c.id===p.id));
+
+  if(notOwned.length>0 && Math.random()<0.7){
+    return notOwned[Math.floor(Math.random()*notOwned.length)];
+  }
+
+  let rand=Math.random();
+  let pool;
+
+  if(rand<0.6) pool=POKEDEX.filter(p=>p.rarity==="common");
+  else if(rand<0.9) pool=POKEDEX.filter(p=>p.rarity==="rare");
+  else pool=POKEDEX.filter(p=>p.rarity==="legend");
+
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+function drawPokemon(){
+  if(score<10){
     alert("分數不足");
     return;
   }
 
-  if(!bossReward) score-=10;
-
-  soundDraw.play();
+  score-=10;
+  document.getElementById("score").innerText=score;
 
   let box=document.getElementById("gacha");
+  if(!box) return;
 
-  // ⭐ 新卡優先
-  let notOwned = POKEDEX.filter(p=>!collection.find(x=>x.id===p.id));
-  let pool = notOwned.length ? notOwned : POKEDEX;
+  let i=0;
 
-  let rand=Math.random();
-  let rarity;
+  let interval=setInterval(()=>{
+    let temp=POKEDEX[Math.floor(Math.random()*POKEDEX.length)];
 
-  if(rand<0.6) rarity="common";
-  else if(rand<0.9) rarity="rare";
-  else rarity="legend";
+    box.innerHTML = `
+      <img src="${temp.img}" width="100">
+    `;
 
-  let candidates = pool.filter(p=>p.rarity===rarity);
-  if(candidates.length===0) candidates=pool;
+    i++;
 
-  let result=candidates[Math.floor(Math.random()*candidates.length)];
+    if(i>12){
+      clearInterval(interval);
 
-  // ⭐ SSR動畫
-  if(result.rarity==="legend"){
-    soundSSR.play();
-    box.innerHTML=`✨✨✨<br><img src="${result.img}" width="140"><br>${result.name}`;
-  }else{
-    box.innerHTML=`<img src="${result.img}" width="100"><br>${result.name}`;
-  }
+      let result=getRandomPokemon();
+      let color=getRarityColor(result.rarity);
 
-  addToCollection(result);
+      box.innerHTML = `
+        <div style="
+          padding:15px;
+          border:4px solid ${color};
+          border-radius:15px;
+          box-shadow:0 0 25px ${color};
+        ">
+          <img src="${result.img}" width="130"><br>
+          <b>${result.name}</b><br>
+          ${result.rarity.toUpperCase()}
+        </div>
+      `;
+
+      if(result.rarity==="legend"){
+        alert("✨ SSR!!! ✨");
+      }
+
+      addToCollection(result);
+    }
+  },80);
 }
 
 // ===== 圖鑑 =====
@@ -205,25 +236,34 @@ function addToCollection(p){
   if(!collection.find(x=>x.id===p.id)){
     collection.push(p);
     alert("📘 收錄："+p.name);
+  }else{
+    alert("已擁有："+p.name);
   }
+
   save();
   renderPokedex();
 }
 
 function renderPokedex(){
-  let el=document.getElementById("pokedex");
   let total=POKEDEX.length;
+  let owned=collection.length;
 
-  document.getElementById("progress").innerText =
-    `收集率：${collection.length}/${total}`;
+  let progressEl=document.getElementById("progress");
+  let pokedexEl=document.getElementById("pokedex");
 
-  el.innerHTML =
-    POKEDEX.map(p=>{
-      let owned=collection.find(x=>x.id===p.id);
-      return owned
-        ? `<div><img src="${p.img}" width="70"><br>${p.name}</div>`
-        : `<div>❓</div>`;
-    }).join("");
+  if(progressEl){
+    progressEl.innerText=`收集率：${owned}/${total}`;
+  }
+
+  if(pokedexEl){
+    pokedexEl.innerHTML=
+      POKEDEX.map(p=>{
+        let owned=collection.find(x=>x.id===p.id);
+        return owned
+          ? `<div><img src="${p.img}" width="80"><br>${p.name}</div>`
+          : `<div>❓<br>???</div>`;
+      }).join("");
+  }
 }
 
 // ===== 儲存 =====
