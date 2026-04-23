@@ -46,20 +46,21 @@ function spawnBoss(){
 }
 
 function renderBoss(){
-  let el = document.getElementById("boss");
-  if(!el) return;
+  let box = document.getElementById("bossBox");
+  if(!box) return;
 
   if(!boss){
-    el.innerHTML = "";
+    box.style.display = "none";
     return;
   }
 
-  el.innerHTML = `
-    🐉 Boss HP：${boss.hp}/${boss.max}
-    <div style="height:10px;background:#ccc">
-      <div style="height:10px;width:${(boss.hp/boss.max)*100}%;background:red"></div>
-    </div>
-  `;
+  box.style.display = "block";
+
+  document.getElementById("bossName").innerText =
+    `🐉 HP：${boss.hp}/${boss.max}`;
+
+  document.getElementById("bossHp").style.width =
+    (boss.hp / boss.max) * 100 + "%";
 }
 
 // ===== 圖鑑 =====
@@ -91,7 +92,7 @@ function getPool(){
 
 // ===== 出題 =====
 function newWord(){
-  usedSpeak=false;
+  usedSpeak = false;
 
   let pool=getPool();
   let due=pool.filter(w=>isDue(w));
@@ -115,7 +116,7 @@ function newWord(){
 
 // ===== 發音 =====
 function speak(){
-  usedSpeak=true;
+  usedSpeak = true;
   let u=new SpeechSynthesisUtterance(current.en);
   u.lang="en-US";
   speechSynthesis.speak(u);
@@ -131,15 +132,16 @@ function check(ans){
       let dmg = usedSpeak ? 1 : 3;
       boss.hp -= dmg;
 
-      if(boss.hp<=0){
+      if(boss.hp <= 0){
         alert("🎉 打敗 Boss！");
-        boss=null;
-        drawPokemon();
+        boss = null;
+        drawPokemon(); // 打贏送抽卡
       }
       renderBoss();
     }
 
     correct();
+
   }else{
     updateMemory(current,false);
     alert("錯了");
@@ -151,15 +153,22 @@ function correct(){
   score += usedSpeak ? 1 : 3;
   exp++;
 
-  // ⭐ 觸發Boss
-  if(level%5===0 && !boss){
-    spawnBoss();
+  // ⭐ 升級
+  if(exp>=20){
+    exp=0;
+    level++;
+
+    alert("升級 Lv."+level);
+
+    // ⭐ 升級後觸發Boss（關鍵）
+    if(level % 5 === 0){
+      spawnBoss();
+    }
   }
 
-  if(exp>=20){
-    level++;
-    exp=0;
-    alert("升級 Lv."+level);
+  // ⭐ 保底Boss（避免漏掉）
+  if(level % 5 === 0 && !boss){
+    spawnBoss();
   }
 
   document.getElementById("score").innerText=score;
@@ -180,14 +189,47 @@ function animate(){
 // ===== 抽卡 =====
 function getRandomPokemon(){
   let rand=Math.random();
-  if(rand<0.6) return POKEDEX[0];
-  if(rand<0.9) return POKEDEX[1];
-  return POKEDEX[2];
+
+  if(rand < 0.6){
+    return POKEDEX.find(p=>p.rarity==="common");
+  }else if(rand < 0.9){
+    return POKEDEX.find(p=>p.rarity==="rare");
+  }else{
+    return POKEDEX.find(p=>p.rarity==="legend");
+  }
 }
 
 function drawPokemon(){
-  let p=getRandomPokemon();
-  addToCollection(p);
+  if(score < 10){
+    alert("分數不足");
+    return;
+  }
+
+  score -= 10;
+
+  let box = document.getElementById("gacha");
+  if(!box) return;
+
+  let i = 0;
+
+  let interval = setInterval(()=>{
+    let temp = POKEDEX[Math.floor(Math.random()*POKEDEX.length)];
+    box.innerHTML = `<img src="${temp.img}" width="100">`;
+    i++;
+
+    if(i>10){
+      clearInterval(interval);
+
+      let result = getRandomPokemon();
+
+      box.innerHTML =
+        `<img src="${result.img}" width="120"><br>${result.name}`;
+
+      addToCollection(result);
+    }
+  },100);
+
+  document.getElementById("score").innerText=score;
 }
 
 // ===== 進化 =====
@@ -222,7 +264,11 @@ function renderPokedex(){
   if(!el) return;
 
   el.innerHTML=
-    collection.map(p=>`<img src="${p.img}" width="80"><br>${p.name}`).join("");
+    collection.map(p=>`
+      <div>
+        <img src="${p.img}" width="80"><br>${p.name}
+      </div>
+    `).join("");
 }
 
 // ===== 儲存 =====
