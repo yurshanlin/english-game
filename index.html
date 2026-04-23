@@ -2,11 +2,65 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<title>英文冒險王 Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英文冒險王 PRO</title>
 
 <link rel="stylesheet" href="style.css">
 <link rel="manifest" href="manifest.json">
+
+<style>
+body{
+  font-family: Arial;
+  text-align:center;
+  padding:10px;
+}
+
+.word{
+  font-size:40px;
+  margin:20px;
+}
+
+button{
+  margin:5px;
+  padding:10px 15px;
+  font-size:16px;
+}
+
+#choices button{
+  display:block;
+  width:80%;
+  margin:8px auto;
+}
+
+/* 🔥 Boss UI */
+#bossBox{
+  margin:15px;
+  padding:10px;
+  border:2px solid #ff5555;
+  border-radius:10px;
+}
+
+#bossHpBar{
+  height:20px;
+  background:#ddd;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+#bossHp{
+  height:100%;
+  background:red;
+  width:100%;
+}
+
+/* ✨ 進化提示 */
+#evolve{
+  font-size:20px;
+  color:orange;
+  margin:10px;
+}
+</style>
+
 </head>
 
 <body>
@@ -16,19 +70,37 @@
 <div>⭐ 分數：<span id="score"></span></div>
 <div>🏆 等級：<span id="level"></span></div>
 
+<!-- 📅 每日任務 -->
+<div id="daily"></div>
+
+<!-- 🔥 Boss戰 -->
+<div id="bossBox" style="display:none;">
+  <h3>👾 BOSS戰</h3>
+  <div id="bossName"></div>
+  <div id="bossHpBar">
+    <div id="bossHp"></div>
+  </div>
+</div>
+
+<!-- ✨ 進化 -->
+<div id="evolve"></div>
+
+<!-- 單字 -->
 <div id="word" class="word"></div>
 
+<!-- 操作 -->
 <button onclick="speak()">🔊 發音</button>
 <button onclick="startVoice()">🎤 說出來</button>
 
+<!-- 選項 -->
 <div id="choices"></div>
 
-<!-- 🎲 抽卡系統 -->
+<!-- 🎲 抽卡 -->
 <h2>🎲 抽卡</h2>
 <div id="gacha"></div>
 <button onclick="drawPokemon()">抽寶可夢（10分）</button>
 
-<!-- 📘 新圖鑑系統 -->
+<!-- 📘 圖鑑 -->
 <h2>📘 圖鑑</h2>
 <div id="progress"></div>
 <div id="pokedex" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;"></div>
@@ -38,7 +110,7 @@
 
 <script>
 document.getElementById("score").innerText = localStorage.getItem("score") || 0;
-document.getElementById("level").innerText = 1;
+document.getElementById("level").innerText = localStorage.getItem("level") || 1;
 </script>
 
 </body>
